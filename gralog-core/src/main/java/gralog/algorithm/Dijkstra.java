@@ -4,12 +4,18 @@ import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Edge;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
+import gralog.rendering.GralogColor;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Comparator;
 import java.util.PriorityQueue;
+import java.util.Iterator;
+
+import javafx.application.Platform;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeType;
 
 
 
@@ -71,6 +77,18 @@ public class Dijkstra extends Algorithm{
         }
     }
 
+    //loop back from last vertex, colour and change size of edges
+    public static void updateShortestPath(Vertex target, HashMap<Vertex, Vertex> predecessor, HashMap<Vertex, Edge> edgeFromPredecessor) {
+        Vertex current = target;
+        //looping back
+        while (predecessor.containsKey(current)) {
+            Edge edge = edgeFromPredecessor.get(current);
+            edge.color = GralogColor.RED;
+            edge.thickness = 0.1;
+            current = predecessor.get(current);
+        }
+    }
+
     //run method
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) {
         HashMap<Vertex, Vertex> predecessor = new HashMap<>();
@@ -81,7 +99,22 @@ public class Dijkstra extends Algorithm{
         if (v == null)
             return "Select one vertex to start Dijkstra's from.";
 
+        //run algorithm
         dijkstra(s, v, predecessor, edgeFromPredecessor, distance, onprogress);
+
+        //find final reachable vertex
+        Vertex last = null;
+        double maxDistance = 0.0;
+        Iterator<Vertex> vertexIterator = s.getVertices().iterator();
+        while (vertexIterator.hasNext()) {
+            Vertex vertex = vertexIterator.next();
+            if (distance.get(vertex) != Double.POSITIVE_INFINITY && distance.get(vertex) > maxDistance) {
+                last = vertex;
+                maxDistance = distance.get(vertex);
+            }
+        }
+
+        updateShortestPath(last, predecessor, edgeFromPredecessor);
 
         //results
         StringBuilder result = new StringBuilder();
@@ -89,7 +122,8 @@ public class Dijkstra extends Algorithm{
         for (Vertex vertex : distance.keySet()) {
             result.append(vertex.label).append("\t").append(distance.get(vertex)).append("\n");
         }
-
+        //add last vertex
+        result.append(last.label).append("\t").append(distance.get(last)).append("\n");
         return result.toString();
     }
 }
