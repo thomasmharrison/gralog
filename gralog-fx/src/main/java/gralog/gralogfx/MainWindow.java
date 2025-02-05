@@ -324,7 +324,7 @@ public class MainWindow extends Application {
 
     void dockPanels2(){
 
-        //objListDock.setMaxWidth(0);
+        /*//objListDock.setMaxWidth(0);
         objListDock.dock(mainDockPane, DockPos.LEFT);
         //objListDock.setMaxWidth(Double.MAX_VALUE);
         objListDock.setPrefHeight(300);
@@ -334,7 +334,7 @@ public class MainWindow extends Application {
         //pluginDock.setMaxWidth(270);
         pluginDock.setMinWidth(200);
         pluginDock.setPrefHeight(70);
-        pluginDock.setMinHeight(70);
+        pluginDock.setMinHeight(70);*/
     }
 
 
